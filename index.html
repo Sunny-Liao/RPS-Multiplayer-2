@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html lang="en-us">
+
+<head>
+
+  <meta charset="UTF-8">
+  <title>Rock Paper Scissors</title>
+
+  <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="./assets/javascript/2players.js"></script>
+
+  <!-- Bootstrap CDN-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="assets/css/2players.css">
+</head>
+
+<body>
+
+  <div class="container">
+
+    <br>
+
+    <!-- Jumbotron Title -->
+    <div class="jumbotron">
+      <h1 class="text-center">Rock Paper Scissors</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="rockPaerScissors">
+                <input type="image" id="rock" src="assets/images/rock.jpg" value="click me">
+                <input type="image" id="paper" src="assets/images/paper.jpg" value="click me">
+                <input type="image" id="scissors" src="assets/images/scissors.jpg" value="click me">
+        </div>
+    </div>
+
+    <br>
+    <div class="row">
+    <div class="col-md-3">
+    <div class="form-group row">
+            <form>
+                <div class="form-group">
+                    <label for="name">Player 1 Name</label>
+                    <input type="name" class="form-control" id="name-input1" aria-describedby="emailHelp">
+                </div>
+                <button class="btn btn-primary" id="submit1" type="submit">Submit</button>
+            </form>
+    </div>
+    </div>
+    <div class="col-md-7"></div>
+    <div class="col-md-2">
+            <div class="form-group row">
+                    <form>
+                        <div class="form-group">
+                            <label for="name" id="name2">Player 2 Name</label>
+                            <input type="name" class="form-control" id="name-input2" aria-describedby="emailHelp">
+                        </div>
+                        <button class="btn btn-primary" id="submit2" type="submit2">Submit</button>
+                    </form>
+            </div>
+            </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-6">
+            <h3 id="choice1">Player 1 Choice: </h3>
+            <span id="player1">
+                <div id="choice1Pic"></div>
+            </span>
+        </div>
+
+        <div class="col-md-6">
+            <h3 id="choice2">Player 2 Choice:</h3>
+            <span id="player2">
+                <div id="choice2Pic"></div>
+            </span> 
+        </div>
+    </div>
+
+    <br>
+    <br>
+
+        <div class="row">
+
+            <div class="col-md-4">
+                <h4>Wins:
+                <span id="player1Win"></span>
+                <br>
+                Losses:
+                <span id="player1Lose"></span></h4>
+            </div>
+
+            <div class="col-md-4">
+            <div id="result"></div>
+            </div>
+
+            <div class="col-md-4">
+                <h4 id="win2">Wins:
+                <span id="player2Win"></span>
+                <br>
+                Losses:
+                <span id="player2Lose"></span></h4>
+            </div>
+        </div>
+        <div id="currentplayer" ></div>
+ 
+
+    
+
+    <br>
+    <br>
+    <br>
+    <br>
+    
+    
+<script src="https://www.gstatic.com/firebasejs/5.8.2/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyBjetVjR81gjKJ1q83LY9TtNglldlFHNkE",
+    authDomain: "friendlychat-7dd7d.firebaseapp.com",
+    databaseURL: "https://friendlychat-7dd7d.firebaseio.com",
+    projectId: "friendlychat-7dd7d",
+    storageBucket: "friendlychat-7dd7d.appspot.com",
+    messagingSenderId: "752269282321"
+  };
+  firebase.initializeApp(config);
+
+  var user = firebase.auth().signInAnonymously();
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        // User is signed in.
+        var isAnonymous = user.isAnonymous;
+        user_id = user.uid;
+      } else {
+        // User is signed out.
+      }
+    });
+
+    function writeUserData(message) {
+      db_ref.push({
+          user_id: user_id,
+          message: message
+      });
+  }
+
+  // get firebase database reference...
+var db_ref = firebase.database().ref('/');
+db_ref.on('child_added', function (data) {
+  var type;
+  if(data.val().user_id == user_id){
+    type="sent";
+  }
+  else{
+    type="replies";
+  }
+  $('<li class="'+type+'"><p>' + data.val().message + '</p></li>').appendTo($('.messages ul'));
+  $('.message-input input').val(null);
+  $('.contact.active .preview').html('<span>You: </span>' + data.val().message);
+    $(".messages").animate({ scrollTop: $(".messages")[0].scrollHeight }, 0);
+});
+</script>
+
+<script>
+
+    var database = firebase.database();
+
+    var number_player = 2;
+
+    var name1 = "";
+    var name2 = "";
+
+$("#submit1").on("click", function(event) {
+    event.preventDefault();
+
+    var name1 = $("#name-input1").val().trim();
+
+    var new1 = {name1};
+
+    database.ref().push(new1);
+
+    console.log(new1.name1);
+
+    alert("Paly 1 successfully added");
+})
+
+$("#submit2").on("click", function(event) {
+    event.preventDefault();
+
+    var name2 = $("#name-input2").val().trim();
+
+    var new2 = {name2};
+
+    database.ref().push(new2);
+
+    console.log(new2.name2);
+
+    alert("Paly 2 successfully added");
+})
+    </script>
+    
+
+  
+
+</body>
+
+</html>
